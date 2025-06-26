@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Juros Compostos - Seu Dinheiro Crescendo!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e0f7fa, #bbdefb); /* Gradiente de azul claro */
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://images.unsplash.com/photo-1579621970795-87facc2f935d?fit=crop&w=1920&q=80'); /* Imagem de moedas */
+            background-size: cover; /* Cobre todo o fundo */
+            background-position: center; /* Centraliza a imagem */
+            background-blend-mode: overlay; /* Mistura a imagem com o gradiente */
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95); /* Fundo branco semi-transparente */
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Sombra mais suave e destacada */
+            max-width: 950px; /* Aumentado para acomodar a tabela */
+            margin: 20px auto; /* Adicionado margem para centralizar melhor */
+            box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura */
+        }
+        h1 {
+            text-align: center;
+            color: #007bff; /* Azul vibrante */
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 1.05em;
+        }
+        input[type="number"], select {
+            width: calc(100% - 24px); /* Ajuste para padding */
+            padding: 12px;
+            border: 1px solid #a0d4ff; /* Borda azul clara */
+            border-radius: 6px;
+            font-size: 17px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        input[type="number"]:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        button {
+            background-color: #28a745; /* Verde vibrante para o botão */
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 19px;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        button:hover {
+            background-color: #218838; /* Verde mais escuro no hover */
+            transform: translateY(-2px);
+        }
+        .resultado {
+            margin-top: 30px;
+            padding: 25px;
+            border: 1px solid #cce5ff; /* Borda azul clara */
+            border-radius: 8px;
+            background-color: #e6f7ff; /* Fundo azul bem claro */
+            box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.05);
+            line-height: 1.6;
+        }
+        .resultado p {
+            margin: 8px 0;
+            font-size: 1.15em;
+        }
+        .resultado strong {
+            color: #0056b3; /* Azul mais escuro para destaque */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: right;
+            font-size: 0.95em;
+        }
+        table th {
+            background-color: #007bff; /* Fundo azul para cabeçalho */
+            color: white;
+            text-align: center;
+            padding: 12px 10px;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f0f8ff; /* Fundo azul muito claro para linhas pares */
+        }
+        table tbody tr:hover {
+            background-color: #e0f0ff; /* Fundo levemente mais escuro no hover da linha */
+        }
+        /* Estilo para a barra de rolagem da tabela */
+        .table-container {
+            max-height: 450px; /* Altura máxima da tabela antes de rolar */
+            overflow-y: auto; /* Adiciona barra de rolagem vertical */
+            margin-top: 25px;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            background-color: #fff; /* Fundo branco para a área de rolagem */
+        }
+        h2 {
+            text-align: center;
+            color: #007bff;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Juros Compostos</h1>
+        <p style="text-align: center; margin-top: -20px; margin-bottom: 30px; color: #666; font-style: italic;">Calcule o crescimento do seu dinheiro, considerando a inflação!</p>
+
+        <div class="form-group">
+            <label for="valorInicial">Valor Inicial (R$):</label>
+            <input type="number" id="valorInicial" value="10000" step="0.01" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="taxaJuros">Taxa de Juros Anual (%):</label>
+            <input type="number" id="taxaJuros" value="10" step="0.01" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="taxaInflacao">Taxa de Inflação Anual (%):</label>
+            <input type="number" id="taxaInflacao" value="4" step="0.01" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="periodoAnos">Período (Anos):</label>
+            <input type="number" id="periodoAnos" value="5" step="1" min="1">
+        </div>
+
+        <div class="form-group">
+            <label for="aporteAdicional">Aporte Adicional (R$):</label>
+            <input type="number" id="aporteAdicional" value="0" step="0.01" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="frequenciaAporte">Frequência do Aporte:</label>
+            <select id="frequenciaAporte">
+                <option value="anual">Anual</option>
+                <option value="mensal">Mensal</option>
+            </select>
+        </div>
+
+        <button onclick="calcularJurosCompostos()">Calcular Crescimento</button>
+
+        <div class="resultado" id="resultado">
+            <p>Preencha os campos acima e clique em "Calcular Crescimento" para ver o resultado detalhado do seu investimento.</p>
+        </div>
+
+        <div id="tabelaDetalhes" class="table-container" style="display: none;">
+            <h2>Detalhes Mês a Mês</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mês</th>
+                        <th>Juros do Mês (R$)</th>
+                        <th>Aporte (R$)</th>
+                        <th>Montante Acumulado (R$)</th>
+                        <th>Poder de Compra Real (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabela">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function calcularJurosCompostos() {
+            const valorInicial = parseFloat(document.getElementById('valorInicial').value);
+            const taxaJurosAnual = parseFloat(document.getElementById('taxaJuros').value) / 100;
+            const taxaInflacaoAnual = parseFloat(document.getElementById('taxaInflacao').value) / 100;
+            const periodoAnos = parseInt(document.getElementById('periodoAnos').value);
+            const aporteAdicional = parseFloat(document.getElementById('aporteAdicional').value);
+            const frequenciaAporte = document.getElementById('frequenciaAporte').value;
+
+            // Converter taxas anuais para mensais equivalentes
+            const taxaJurosMensal = Math.pow(1 + taxaJurosAnual, 1/12) - 1;
+            const taxaInflacaoMensal = Math.pow(1 + taxaInflacaoAnual, 1/12) - 1;
+            const totalMeses = periodoAnos * 12;
+
+            let montanteAtual = valorInicial;
+            let totalAportes = 0; // Para somar os aportes totais
+
+            const corpoTabela = document.getElementById('corpoTabela');
+            corpoTabela.innerHTML = ''; // Limpa a tabela antes de preencher
+
+            for (let mes = 1; mes <= totalMeses; mes++) {
+                let jurosDoMes = montanteAtual * taxaJurosMensal;
+                montanteAtual += jurosDoMes;
+
+                let aporteMes = 0;
+                if (aporteAdicional > 0) {
+                    if (frequenciaAporte === 'mensal') {
+                        aporteMes = aporteAdicional;
+                        montanteAtual += aporteMes;
+                    } else if (frequenciaAporte === 'anual' && (mes % 12 === 0)) { // Aporte anual no último mês do ano
+                        aporteMes = aporteAdicional;
+                        montanteAtual += aporteMes;
+                    }
+                }
+                totalAportes += aporteMes;
+
+                // Calcula o poder de compra real mês a mês
+                let poderCompraRealMes = montanteAtual / Math.pow(1 + taxaInflacaoMensal, mes);
+
+                // Adicionar linha à tabela
+                const row = corpoTabela.insertRow();
+                row.insertCell().textContent = mes;
+                row.insertCell().textContent = jurosDoMes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                row.insertCell().textContent = aporteMes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                row.insertCell().textContent = montanteAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                row.insertCell().textContent = poderCompraRealMes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            const montanteFinalReal = montanteAtual / Math.pow(1 + taxaInflacaoMensal, totalMeses);
+
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = `
+                <p><strong>Valor Inicial:</strong> ${valorInicial.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                <p><strong>Total de Aportes:</strong> ${totalAportes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                <p><strong>Montante Final Nominal (sem considerar inflação):</strong> ${montanteAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                <p><strong>Poder de Compra Real (ajustado pela inflação):</strong> ${montanteFinalReal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                <p style="font-style: italic; color: #4CAF50; font-weight: bold;">Isso significa que o seu dinheiro terá o poder de compra equivalente a <span style="font-size: 1.2em; color: #007bff;">${montanteFinalReal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span> dos valores de hoje, devido à inflação.</p>
+            `;
+
+            // Exibe a tabela de detalhes
+            document.getElementById('tabelaDetalhes').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
